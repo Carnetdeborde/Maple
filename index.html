@@ -42,3 +42,46 @@
   <a href="formulaire.html" class="button">Ajouter une étape</a>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([48.85, 2.35], 5);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    const sheetURL = 'https://script.google.com/macros/s/AKfycbzh2jYJmVP0BshnpEhagcArKOY3DDLOe4HqfF2XJlteD4jbtrdSNe_BrynYnbLoftaH/exec';
+
+    fetch(sheetURL)
+      .then(res => res.json())
+      .then(etapes => {
+        if (!Array.isArray(etapes)) {
+          console.error("Erreur de format de données :", etapes);
+          return;
+        }
+
+        etapes.forEach(etape => {
+          const lat = parseFloat(etape.latitude);
+          const lng = parseFloat(etape.longitude);
+
+          if (isNaN(lat) || isNaN(lng)) {
+            console.warn("Coordonnées invalides :", etape);
+            return;
+          }
+
+          L.marker([lat, lng]).addTo(map)
+            .bindPopup(`
+              <b>${etape.lieu || "Lieu inconnu"}</b><br>
+              ${etape.date || ""}<br>
+              ${etape.texte || ""}<br>
+              ${etape.instagram ? `<a href="${etape.instagram}" target="_blank">📸 Instagram</a>` : ""}
+            `);
+
+          const timelineItem = document.createElement("div");
+          timelineItem.textContent = etape.lieu || "Étape";
+          timelineItem.onclick = () => map.setView([lat, lng], 8);
+          document.getElementById("timeline").appendChild(timelineItem);
+        });
+      })
+      .catch(err => {
+        console.error("Erreur de chargement des étapes :", err);
+      });
+  </script>
+</body>
+</html>
