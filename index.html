@@ -3,27 +3,50 @@
 <head>
   <meta charset="UTF-8" />
   <title>Maple – Carte interactive</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <style>
-    #map { height: 80vh; width: 100%; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      font-family: sans-serif;
+      height: 100%;
+    }
+
+    #map {
+      flex: 1;
+      width: 100%;
+      min-height: 0;
+    }
+
     .timeline {
       display: flex;
       overflow-x: auto;
       padding: 1em;
       background: #f0f0f0;
       border-top: 1px solid #ccc;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
     }
+
     .timeline div {
-      margin: 0 10px;
-      cursor: pointer;
-      padding: 0.5em 1em;
+      margin: 0 8px;
+      padding: 0.4em 1em;
       background: #e0e0e0;
       border-radius: 4px;
       white-space: nowrap;
+      scroll-snap-align: center;
+      font-size: 0.9em;
+      text-align: center;
+      flex-shrink: 0;
     }
-    .timeline div:hover {
-      background: #c0c0ff;
-    }
+
     .floating-buttons {
       position: fixed;
       bottom: 20px;
@@ -33,6 +56,7 @@
       gap: 10px;
       z-index: 1000;
     }
+
     .floating-buttons .button {
       background-color: #4CAF50;
       color: white;
@@ -42,6 +66,7 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
       font-size: 1em;
     }
+
     .admin-link {
       position: fixed;
       top: 10px;
@@ -52,13 +77,13 @@
       opacity: 0.3;
       transition: opacity 0.2s;
     }
+
     .admin-link:hover {
       opacity: 1;
     }
   </style>
 </head>
 <body>
-  <h1>Maple – Carte interactive</h1>
   <div id="map"></div>
   <div class="timeline" id="timeline"></div>
 
@@ -69,6 +94,7 @@
   <div class="admin-link" onclick="verifierAccesAdmin()" title="Accès privé admin">⚙️</div>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script async src="//www.instagram.com/embed.js"></script>
   <script>
     const map = L.map('map').setView([48.85, 2.35], 5);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
@@ -80,24 +106,36 @@
       .then(data => {
         const { etapes, suggestions } = data;
 
+        const points = [];
+
         etapes.forEach(etape => {
           const lat = parseFloat(etape.latitude);
           const lng = parseFloat(etape.longitude);
           if (isNaN(lat) || isNaN(lng)) return;
+          points.push([lat, lng]);
 
           L.marker([lat, lng]).addTo(map)
             .bindPopup(`
               <b>${etape.lieu || "Lieu inconnu"}</b><br>
               ${etape.date || ""}<br>
               ${etape.texte || ""}<br>
-              ${etape.instagram ? `<a href="${etape.instagram}" target="_blank">📸 Instagram</a>` : ""}
-            `);
+              ${etape.instagram ? `
+                <blockquote class="instagram-media" data-instgrm-permalink="${etape.instagram}" data-instgrm-version="14" style="background:#FFF; border:none; margin:0; padding:0;"></blockquote>
+              ` : ""}
+            `)
+            .on('popupopen', () => {
+              if (window.instgrm) instgrm.Embeds.process();
+            });
 
           const timelineItem = document.createElement("div");
           timelineItem.textContent = etape.lieu || "Étape";
           timelineItem.onclick = () => map.setView([lat, lng], 8);
           document.getElementById("timeline").appendChild(timelineItem);
         });
+
+        if (points.length > 1) {
+          L.polyline(points, { color: 'blue' }).addTo(map);
+        }
 
         suggestions.forEach(sugg => {
           const lat = parseFloat(sugg.latitude);
