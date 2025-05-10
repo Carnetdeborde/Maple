@@ -4,40 +4,50 @@
   <meta charset="UTF-8">
   <title>Suggérer un lieu</title>
   <style>
-    label, input, textarea { display: block; margin: 10px 0; width: 100%; }
+    body { font-family: sans-serif; max-width: 500px; margin: auto; padding: 2em; }
+    input, textarea, button {
+      width: 100%;
+      padding: 0.7em;
+      margin-top: 1em;
+      font-size: 1em;
+    }
   </style>
 </head>
 <body>
-  <h1>Suggérer un lieu à visiter</h1>
-  <form id="suggForm">
-    <label>Prénom</label>
-    <input type="text" id="prenom" required>
-
-    <label>Suggestion</label>
-    <textarea id="texte" required></textarea>
-
-    <label>Latitude</label>
-    <input type="number" step="any" id="lat" required>
-
-    <label>Longitude</label>
-    <input type="number" step="any" id="lng" required>
-
-<input name="ContactSurPlace" id="contactsurplace" type="text" placeholder="Personne à contacter sur place (optionnel)" />
-
-    <button type="submit">Envoyer</button>
+  <h2>Proposer un lieu à visiter</h2>
+  <form id="suggestion-form">
+    <input name="Prenom" id="prenom" type="text" placeholder="Ton prénom" required />
+    <textarea name="Texte" id="texte" placeholder="Ta suggestion (lieu, endroit, idée...)" required></textarea>
+    <input name="Latitude" id="latitude" type="text" placeholder="Latitude (ex: 48.8566)" required />
+    <input name="Longitude" id="longitude" type="text" placeholder="Longitude (ex: 2.3522)" required />
+    <input name="ContactSurPlace" id="contactsurplace" type="text" placeholder="Personne à contacter sur place (optionnel)" />
+    <button type="submit">Envoyer la suggestion</button>
+    <p id="msg"></p>
   </form>
 
   <script>
-    document.getElementById('suggForm').addEventListener('submit', e => {
+    const form = document.getElementById("suggestion-form");
+    const msg = document.getElementById("msg");
+
+    form.addEventListener("submit", (e) => {
       e.preventDefault();
-      const data = {
-        prenom: document.getElementById('prenom').value,
-        texte: document.getElementById('texte').value,
-        lat: parseFloat(document.getElementById('lat').value),
-        lng: parseFloat(document.getElementById('lng').value)
-      };
-      console.log("Copier dans JSON suggestions.json :", JSON.stringify(data, null, 2));
-      alert("Suggestion envoyée ! À copier dans suggestions.json.");
+      msg.textContent = "Envoi en cours...";
+
+      const data = new FormData(form);
+      data.append("source", "contact"); // 👈 cible l'onglet "Contact"
+
+      fetch("https://script.google.com/macros/s/AKfycbzh2jYJmVP0BshnpEhagcArKOY3DDLOe4HqfF2XJlteD4jbtrdSNe_BrynYnbLoftaH/exec", {
+        method: "POST",
+        body: data
+      })
+      .then(() => {
+        msg.textContent = "✅ Suggestion envoyée, merci !";
+        form.reset();
+      })
+      .catch((err) => {
+        console.error(err);
+        msg.textContent = "❌ Une erreur est survenue.";
+      });
     });
   </script>
 </body>
