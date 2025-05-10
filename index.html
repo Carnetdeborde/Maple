@@ -62,12 +62,12 @@
   <div id="map"></div>
   <div class="timeline" id="timeline"></div>
 
-  <!-- ✅ Bouton suggestion visible -->
+  <!-- 💡 Bouton suggestion (public) -->
   <div class="floating-buttons">
     <a href="suggestion.html" class="button">💡 Suggérer un lieu</a>
   </div>
 
-  <!-- ✅ Lien admin discret -->
+  <!-- ⚙️ Lien admin (privé) -->
   <div class="admin-link" onclick="window.location.href='formulaire.html'" title="Accès privé admin">⚙️</div>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -82,6 +82,7 @@
       .then(data => {
         const { etapes, suggestions } = data;
 
+        // 📍 Étapes officielles
         etapes.forEach(etape => {
           const lat = parseFloat(etape.latitude);
           const lng = parseFloat(etape.longitude);
@@ -101,6 +102,7 @@
           document.getElementById("timeline").appendChild(timelineItem);
         });
 
+        // 🟠 Suggestions publiques
         suggestions.forEach(sugg => {
           const lat = parseFloat(sugg.latitude);
           const lng = parseFloat(sugg.longitude);
@@ -108,4 +110,20 @@
 
           L.circle([lat, lng], {
             radius: 5000,
-            color: 'or
+            color: 'orange',
+            fillColor: '#ffa500',
+            fillOpacity: 0.5
+          }).addTo(map).bindPopup(`
+            💬 <b>${sugg.prenom}</b> suggère :<br>
+            ${sugg.texte}<br>
+            ${sugg.ville ? `<br>📍 Ville : ${sugg.ville}` : ""}
+            ${sugg.contactsurplace ? `<br>📞 Contact sur place : ${sugg.contactsurplace}` : ""}
+          `);
+        });
+      })
+      .catch(err => {
+        console.error("Erreur de chargement des données :", err);
+      });
+  </script>
+</body>
+</html>
