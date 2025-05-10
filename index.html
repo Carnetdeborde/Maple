@@ -23,17 +23,17 @@
       width: 100%;
       min-height: 0;
     }
-    #drapeau {
+    #message-lieu {
       position: fixed;
       top: 10px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 1em;
-      z-index: 1002;
-      background: rgba(255, 255, 255, 0.8);
-      padding: 0.4em 1em;
+      font-size: 1.1em;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 0.5em 1em;
       border-radius: 6px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      z-index: 1002;
     }
     .timeline {
       position: fixed;
@@ -94,7 +94,7 @@
   </style>
 </head>
 <body>
-  <div id="drapeau"></div>
+  <div id="message-lieu"></div>
   <div id="map"></div>
   <div class="timeline" id="timeline"></div>
 
@@ -121,7 +121,7 @@
         if (etapes.length > 0) {
           const last = etapes[etapes.length - 1];
           const lieu = last.lieu || "";
-          document.getElementById("drapeau").textContent = `Jean et Raoul se trouvent actuellement à : ${lieu}`;
+          document.getElementById("message-lieu").textContent = `Jean et Raoul se trouvent actuellement à : ${lieu}`;
         }
 
         etapes.forEach(etape => {
