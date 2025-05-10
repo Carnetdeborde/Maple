@@ -24,17 +24,36 @@
     .timeline div:hover {
       background: #c0c0ff;
     }
-    .buttons {
-      margin: 1em;
+    .floating-buttons {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 1000;
     }
-    .button {
-      display: inline-block;
-      margin-right: 10px;
-      padding: 0.7em 1.2em;
+    .floating-buttons .button {
       background-color: #4CAF50;
       color: white;
-      text-decoration: none;
+      padding: 0.7em 1em;
       border-radius: 6px;
+      text-decoration: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      font-size: 1em;
+    }
+    .admin-link {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      font-size: 1.5em;
+      cursor: pointer;
+      z-index: 1001;
+      opacity: 0.3;
+      transition: opacity 0.2s;
+    }
+    .admin-link:hover {
+      opacity: 1;
     }
   </style>
 </head>
@@ -42,10 +61,10 @@
   <h1>Maple – Carte interactive</h1>
   <div id="map"></div>
   <div class="timeline" id="timeline"></div>
-  <div class="buttons">
-    <a href="formulaire.html" class="button">Ajouter une étape</a>
-    <a href="suggestion.html" class="button">Suggérer un lieu</a>
+  <div class="floating-buttons">
+    <a href="suggestion.html" class="button">💡 Suggérer un lieu</a>
   </div>
+  <div class="admin-link" onclick="window.location.href='formulaire.html'" title="Accès privé admin">⚙️</div>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
@@ -59,7 +78,6 @@
       .then(data => {
         const { etapes, suggestions } = data;
 
-        // Afficher les étapes officielles
         etapes.forEach(etape => {
           const lat = parseFloat(etape.latitude);
           const lng = parseFloat(etape.longitude);
@@ -79,7 +97,6 @@
           document.getElementById("timeline").appendChild(timelineItem);
         });
 
-        // Afficher les suggestions (cercles orange)
         suggestions.forEach(sugg => {
           const lat = parseFloat(sugg.latitude);
           const lng = parseFloat(sugg.longitude);
