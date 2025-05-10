@@ -2,45 +2,43 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Carneto V2 – Carte</title>
+  <title>Maple – Carte interactive</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <style>
     #map { height: 80vh; width: 100%; }
-    .timeline { display: flex; overflow-x: auto; padding: 1em; background: #f0f0f0; }
-    .timeline div { margin: 0 10px; cursor: pointer; }
+    .timeline {
+      display: flex;
+      overflow-x: auto;
+      padding: 1em;
+      background: #f0f0f0;
+      border-top: 1px solid #ccc;
+    }
+    .timeline div {
+      margin: 0 10px;
+      cursor: pointer;
+      padding: 0.5em 1em;
+      background: #e0e0e0;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .timeline div:hover {
+      background: #c0c0ff;
+    }
+    a.button {
+      display: inline-block;
+      margin: 1em;
+      padding: 0.7em 1.2em;
+      background-color: #4CAF50;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+    }
   </style>
 </head>
 <body>
-  <h1>Carneto V2 – Carte Interactive</h1>
+  <h1>Maple – Carte interactive</h1>
   <div id="map"></div>
   <div class="timeline" id="timeline"></div>
-  <a href="formulaire.html">Ajouter une étape (privé)</a>
+  <a href="formulaire.html" class="button">Ajouter une étape</a>
+
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script>
-    const map = L.map('map').setView([48.85, 2.35], 5);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-    fetch('data/etapes.json')
-      .then(res => res.json())
-      .then(etapes => {
-        etapes.forEach(etape => {
-          const marker = L.marker([etape.lat, etape.lng]).addTo(map)
-            .bindPopup(`<b>${etape.nom}</b><br>${etape.date}`);
-          document.getElementById("timeline").innerHTML +=
-            `<div onclick="map.setView([${etape.lat}, ${etape.lng}], 8)">${etape.nom}</div>`;
-        });
-      });
-
-    fetch('data/suggestions.json')
-      .then(res => res.json())
-      .then(suggestions => {
-        suggestions.forEach(sugg => {
-          L.circle([sugg.lat, sugg.lng], {
-            radius: 5000,
-            color: 'orange'
-          }).addTo(map).bindPopup(`<i>${sugg.prenom}</i>: ${sugg.texte}`);
-        });
-      });
-  </script>
-</body>
-</html>
