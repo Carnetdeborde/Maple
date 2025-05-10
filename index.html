@@ -11,7 +11,6 @@
       padding: 0;
       height: 100%;
     }
-
     body {
       display: flex;
       flex-direction: column;
@@ -19,13 +18,11 @@
       height: 100%;
       overflow: hidden;
     }
-
     #map {
       flex: 1;
       width: 100%;
       min-height: 0;
     }
-
     #drapeau {
       position: fixed;
       top: 10px;
@@ -33,7 +30,6 @@
       font-size: 2em;
       z-index: 1002;
     }
-
     .timeline {
       position: fixed;
       bottom: 0;
@@ -48,7 +44,6 @@
       -webkit-overflow-scrolling: touch;
       z-index: 999;
     }
-
     .timeline div {
       margin: 0 8px;
       padding: 0.4em 1em;
@@ -60,7 +55,6 @@
       text-align: center;
       flex-shrink: 0;
     }
-
     .floating-buttons {
       position: fixed;
       bottom: 110px;
@@ -70,7 +64,6 @@
       gap: 10px;
       z-index: 1000;
     }
-
     .floating-buttons .button {
       background-color: #4CAF50;
       color: white;
@@ -80,7 +73,6 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
       font-size: 1em;
     }
-
     .admin-link {
       position: fixed;
       top: 10px;
@@ -91,7 +83,6 @@
       opacity: 0.3;
       transition: opacity 0.2s;
     }
-
     .admin-link:hover {
       opacity: 1;
     }
@@ -122,7 +113,6 @@
         const { etapes, suggestions } = data;
         const points = [];
 
-        // 🇺🇳 Afficher le drapeau du dernier pays
         if (etapes.length > 0) {
           const last = etapes[etapes.length - 1];
           const lieu = last.lieu || "";
@@ -144,9 +134,7 @@
               <b>${etape.lieu || "Lieu inconnu"}</b><br>
               ${etape.date || ""}<br>
               ${etape.texte || ""}<br>
-              ${instaURL ? `
-                <blockquote class="instagram-media" data-instgrm-permalink="${instaURL}" data-instgrm-version="14" style="background:#FFF; border:none; margin:0; padding:0;"></blockquote>
-              ` : ""}
+              ${instaURL ? `<blockquote class="instagram-media" data-instgrm-permalink="${instaURL}" data-instgrm-version="14"></blockquote>` : ""}
             `)
             .on('popupopen', () => {
               if (window.instgrm) instgrm.Embeds.process();
@@ -176,7 +164,7 @@
             💬 <b>${sugg.prenom}</b> suggère :<br>
             ${sugg.texte}<br>
             ${sugg.ville ? `<br>📍 Ville : ${sugg.ville}` : ""}
-            ${sugg.contactsurplace ? `<br>📞 Contact sur place : ${sugg.contactsurplace}` : ""}
+            ${sugg.contactsurplace ? `<br>📞 Contact : ${sugg.contactsurplace}` : ""}
           `);
         });
       })
@@ -195,7 +183,7 @@
         sessionStorage.setItem("accesAdmin", "ok");
         window.location.href = "formulaire.html";
       } else {
-        alert("⛔ Accès refusé.");
+        alert("⛔️ Accès refusé.");
       }
     }
 
@@ -207,4 +195,14 @@
         "Brésil": "BR", "Argentine": "AR", "Chili": "CL", "Mexique": "MX", "Islande": "IS",
         "Norvège": "NO", "Suède": "SE", "Finlande": "FI", "Grèce": "GR", "Turquie": "TR",
         "Inde": "IN", "Chine": "CN", "Australie": "AU", "Nouvelle-Zélande": "NZ", "Corée du Sud": "KR",
-        "Thaïlande": "TH", "Vietnam": "VN", "Indonésie": "ID", "Égypte"
+        "Thaïlande": "TH", "Vietnam": "VN", "Indonésie": "ID", "Égypte": "EG", "Afrique du Sud": "ZA",
+        "Tunisie": "TN", "Sénégal": "SN", "Colombie": "CO", "Pérou": "PE"
+      };
+      const cleaned = name.trim().toLowerCase().replace(/^./, c => c.toUpperCase());
+      const code = map[cleaned];
+      if (!code) return "";
+      return code.replace(/./g, char => String.fromCodePoint(char.charCodeAt(0) + 127397));
+    }
+  </script>
+</body>
+</html>
