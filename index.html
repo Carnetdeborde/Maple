@@ -62,13 +62,11 @@
   <div id="map"></div>
   <div class="timeline" id="timeline"></div>
 
-  <!-- 💡 Bouton suggestion (public) -->
   <div class="floating-buttons">
     <a href="suggestion.html" class="button">💡 Suggérer un lieu</a>
   </div>
 
-  <!-- ⚙️ Lien admin (privé) -->
-  <div class="admin-link" onclick="window.location.href='formulaire.html'" title="Accès privé admin">⚙️</div>
+  <div class="admin-link" onclick="verifierAccesAdmin()" title="Accès privé admin">⚙️</div>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
@@ -82,7 +80,6 @@
       .then(data => {
         const { etapes, suggestions } = data;
 
-        // 📍 Étapes officielles
         etapes.forEach(etape => {
           const lat = parseFloat(etape.latitude);
           const lng = parseFloat(etape.longitude);
@@ -102,7 +99,6 @@
           document.getElementById("timeline").appendChild(timelineItem);
         });
 
-        // 🟠 Suggestions publiques
         suggestions.forEach(sugg => {
           const lat = parseFloat(sugg.latitude);
           const lng = parseFloat(sugg.longitude);
@@ -124,6 +120,21 @@
       .catch(err => {
         console.error("Erreur de chargement des données :", err);
       });
+
+    function verifierAccesAdmin() {
+      const motDePasse = "maple2025";
+      if (sessionStorage.getItem("accesAdmin") === "ok") {
+        window.location.href = "formulaire.html";
+        return;
+      }
+      const saisie = prompt("Mot de passe admin ?");
+      if (saisie === motDePasse) {
+        sessionStorage.setItem("accesAdmin", "ok");
+        window.location.href = "formulaire.html";
+      } else {
+        alert("⛔ Accès refusé.");
+      }
+    }
   </script>
 </body>
 </html>
