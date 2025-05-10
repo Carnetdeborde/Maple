@@ -28,8 +28,12 @@
       top: 10px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 2.5em;
+      font-size: 1em;
       z-index: 1002;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 0.4em 1em;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     .timeline {
       position: fixed;
@@ -117,9 +121,7 @@
         if (etapes.length > 0) {
           const last = etapes[etapes.length - 1];
           const lieu = last.lieu || "";
-          const country = lieu.split(",").pop().trim();
-          const flag = countryNameToFlagEmoji(country);
-          document.getElementById("drapeau").textContent = flag || "";
+          document.getElementById("drapeau").textContent = `Jean et Raoul se trouvent actuellement à : ${lieu}`;
         }
 
         etapes.forEach(etape => {
@@ -186,23 +188,6 @@
       } else {
         alert("⛔️ Accès refusé.");
       }
-    }
-
-    function countryNameToFlagEmoji(name) {
-      const map = {
-        "France": "FR", "Espagne": "ES", "Italie": "IT", "Allemagne": "DE", "Belgique": "BE",
-        "Suisse": "CH", "Maroc": "MA", "États-Unis": "US", "USA": "US", "Canada": "CA",
-        "Japon": "JP", "Portugal": "PT", "Royaume-Uni": "GB", "Angleterre": "GB", "Irlande": "IE",
-        "Brésil": "BR", "Argentine": "AR", "Chili": "CL", "Mexique": "MX", "Islande": "IS",
-        "Norvège": "NO", "Suède": "SE", "Finlande": "FI", "Grèce": "GR", "Turquie": "TR",
-        "Inde": "IN", "Chine": "CN", "Australie": "AU", "Nouvelle-Zélande": "NZ", "Corée du Sud": "KR",
-        "Thaïlande": "TH", "Vietnam": "VN", "Indonésie": "ID", "Égypte": "EG", "Afrique du Sud": "ZA",
-        "Tunisie": "TN", "Sénégal": "SN", "Colombie": "CO", "Pérou": "PE"
-      };
-      const cleaned = name.trim().toLowerCase().replace(/^./, c => c.toUpperCase());
-      const code = map[cleaned];
-      if (!code) return "";
-      return [...code].map(c => String.fromCodePoint(127397 + c.charCodeAt())).join("");
     }
   </script>
 </body>
