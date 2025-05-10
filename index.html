@@ -49,7 +49,7 @@
 
     .floating-buttons {
       position: fixed;
-      bottom: 20px;
+      bottom: 80px; /* 🔼 bouton remonté */
       right: 20px;
       display: flex;
       flex-direction: column;
@@ -134,12 +134,10 @@
           document.getElementById("timeline").appendChild(timelineItem);
         });
 
-        // ✅ Trace entre les étapes
         if (points.length > 1) {
           L.polyline(points, { color: 'blue' }).addTo(map);
         }
 
-        // 🔶 Suggestions (cercles orange)
         suggestions.forEach(sugg => {
           const lat = parseFloat(sugg.latitude);
           const lng = parseFloat(sugg.longitude);
