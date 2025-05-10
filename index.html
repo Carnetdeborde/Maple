@@ -105,7 +105,6 @@
       .then(res => res.json())
       .then(data => {
         const { etapes, suggestions } = data;
-
         const points = [];
 
         etapes.forEach(etape => {
@@ -114,13 +113,15 @@
           if (isNaN(lat) || isNaN(lng)) return;
           points.push([lat, lng]);
 
+          const instaURL = etape.instagram ? etape.instagram.split('?')[0] : "";
+
           L.marker([lat, lng]).addTo(map)
             .bindPopup(`
               <b>${etape.lieu || "Lieu inconnu"}</b><br>
               ${etape.date || ""}<br>
               ${etape.texte || ""}<br>
-              ${etape.instagram ? `
-                <blockquote class="instagram-media" data-instgrm-permalink="${etape.instagram}" data-instgrm-version="14" style="background:#FFF; border:none; margin:0; padding:0;"></blockquote>
+              ${instaURL ? `
+                <blockquote class="instagram-media" data-instgrm-permalink="${instaURL}" data-instgrm-version="14" style="background:#FFF; border:none; margin:0; padding:0;"></blockquote>
               ` : ""}
             `)
             .on('popupopen', () => {
@@ -133,10 +134,12 @@
           document.getElementById("timeline").appendChild(timelineItem);
         });
 
+        // ✅ Trace entre les étapes
         if (points.length > 1) {
           L.polyline(points, { color: 'blue' }).addTo(map);
         }
 
+        // 🔶 Suggestions (cercles orange)
         suggestions.forEach(sugg => {
           const lat = parseFloat(sugg.latitude);
           const lng = parseFloat(sugg.longitude);
