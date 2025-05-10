@@ -1,14 +1,1 @@
-[
-  {
-    "prenom": "Alice",
-    "texte": "Va voir le marché aux fleurs à Amsterdam !",
-    "lat": 52.3702,
-    "lng": 4.8952
-  },
-  {
-    "prenom": "Leo",
-    "texte": "Le quartier du Trastevere à Rome est génial.",
-    "lat": 41.8897,
-    "lng": 12.4710
-  }
-]
+[]
