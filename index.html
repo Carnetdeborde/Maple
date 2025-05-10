@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Carneto V2 – Carte</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    #map { height: 80vh; width: 100%; }
+    .timeline { display: flex; overflow-x: auto; padding: 1em; background: #f0f0f0; }
+    .timeline div { margin: 0 10px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Carneto V2 – Carte Interactive</h1>
+  <div id="map"></div>
+  <div class="timeline" id="timeline"></div>
+  <a href="formulaire.html">Ajouter une étape (privé)</a>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([48.85, 2.35], 5);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    fetch('data/etapes.json')
+      .then(res => res.json())
+      .then(etapes => {
+        etapes.forEach(etape => {
+          const marker = L.marker([etape.lat, etape.lng]).addTo(map)
+            .bindPopup(`<b>${etape.nom}</b><br>${etape.date}`);
+          document.getElementById("timeline").innerHTML +=
+            `<div onclick="map.setView([${etape.lat}, ${etape.lng}], 8)">${etape.nom}</div>`;
+        });
+      });
+
+    fetch('data/suggestions.json')
+      .then(res => res.json())
+      .then(suggestions => {
+        suggestions.forEach(sugg => {
+          L.circle([sugg.lat, sugg.lng], {
+            radius: 5000,
+            color: 'orange'
+          }).addTo(map).bindPopup(`<i>${sugg.prenom}</i>: ${sugg.texte}`);
+        });
+      });
+  </script>
+</body>
+</html>
