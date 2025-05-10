@@ -1,0 +1,16 @@
+[
+  {
+    "nom": "Paris, France",
+    "lat": 48.8566,
+    "lng": 2.3522,
+    "date": "2025-04-15",
+    "insta": "https://instagram.com/..."
+  },
+  {
+    "nom": "Berlin, Allemagne",
+    "lat": 52.52,
+    "lng": 13.405,
+    "date": "2025-04-20",
+    "insta": ""
+  }
+]
