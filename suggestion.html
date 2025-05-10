@@ -11,15 +11,19 @@
       margin-top: 1em;
       font-size: 1em;
     }
+    input[readonly] {
+      background-color: #eee;
+    }
   </style>
 </head>
 <body>
   <h2>Proposer un lieu à visiter</h2>
   <form id="suggestion-form">
     <input name="Prenom" id="prenom" type="text" placeholder="Ton prénom" required />
-    <textarea name="Texte" id="texte" placeholder="Ta suggestion (lieu, endroit, idée...)" required></textarea>
-    <input name="Latitude" id="latitude" type="text" placeholder="Latitude (ex: 48.8566)" required />
-    <input name="Longitude" id="longitude" type="text" placeholder="Longitude (ex: 2.3522)" required />
+    <textarea name="Texte" id="texte" placeholder="Ta suggestion (lieu, idée...)" required></textarea>
+    <input name="VilleRecherchee" id="ville" type="text" placeholder="Ville ou lieu à suggérer" required />
+    <input name="Latitude" id="latitude" type="text" placeholder="Latitude" readonly />
+    <input name="Longitude" id="longitude" type="text" placeholder="Longitude" readonly />
     <input name="ContactSurPlace" id="contactsurplace" type="text" placeholder="Personne à contacter sur place (optionnel)" />
     <button type="submit">Envoyer la suggestion</button>
     <p id="msg"></p>
@@ -28,13 +32,42 @@
   <script>
     const form = document.getElementById("suggestion-form");
     const msg = document.getElementById("msg");
+    const villeInput = document.getElementById("ville");
+    const latInput = document.getElementById("latitude");
+    const lonInput = document.getElementById("longitude");
+
+    // Geocode la ville quand on la quitte
+    villeInput.addEventListener("blur", async () => {
+      const ville = villeInput.value.trim();
+      if (!ville) return;
+
+      msg.textContent = "🔍 Recherche des coordonnées...";
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(ville)}`);
+        const data = await res.json();
+
+        if (data.length > 0) {
+          const result = data[0];
+          latInput.value = parseFloat(result.lat).toFixed(6);
+          lonInput.value = parseFloat(result.lon).toFixed(6);
+          msg.textContent = "✅ Coordonnées trouvées.";
+        } else {
+          latInput.value = "";
+          lonInput.value = "";
+          msg.textContent = "❌ Ville introuvable.";
+        }
+      } catch (err) {
+        console.error(err);
+        msg.textContent = "❌ Erreur lors de la recherche.";
+      }
+    });
 
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       msg.textContent = "Envoi en cours...";
 
       const data = new FormData(form);
-      data.append("source", "contact"); // 👈 cible l'onglet "Contact"
+      data.append("source", "contact");
 
       fetch("https://script.google.com/macros/s/AKfycbzh2jYJmVP0BshnpEhagcArKOY3DDLOe4HqfF2XJlteD4jbtrdSNe_BrynYnbLoftaH/exec", {
         method: "POST",
