@@ -1,53 +1,101 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ajouter une étape</title>
   <style>
-    label, input, textarea { display: block; margin: 10px 0; width: 100%; }
+    body { font-family: sans-serif; padding: 1rem; max-width: 600px; margin: auto; }
+    input, textarea, button { width: 100%; padding: 0.8rem; margin-top: 1rem; font-size: 1rem; }
+    .coord-group { display: flex; gap: 1rem; }
+    .coord-group input { flex: 1; }
+    #preview img { height: 100px; border: 1px solid #ccc; border-radius: 6px; margin-top: 1rem; }
   </style>
 </head>
 <body>
-  <h1>Ajouter une étape</h1>
-  <form id="etapeForm">
-    <label>Nom de l'étape (ville, pays)</label>
-    <input type="text" id="nom" required>
-
-    <label>Latitude</label>
-    <input type="number" step="any" id="lat" required>
-
-    <label>Longitude</label>
-    <input type="number" step="any" id="lng" required>
-
-    <label>Date</label>
-    <input type="date" id="date" required>
-
-    <label>URL Instagram (optionnel)</label>
-    <input type="url" id="insta">
+  <h2>Nouvelle étape</h2>
+  <form id="etape-form">
+    <input name="Lieu" id="lieu" type="text" placeholder="Lieu (automatique)" required />
+    <input name="Date" id="date" type="date" placeholder="Date" required />
+    <div class="coord-group">
+      <input name="Latitude" id="latitude" type="text" placeholder="Latitude" required />
+      <input name="Longitude" id="longitude" type="text" placeholder="Longitude" required />
+    </div>
+    <textarea name="Texte" id="texte" placeholder="Texte de l’étape" required></textarea>
+    
+    <input name="Instagram" id="insta" type="url" placeholder="Lien Instagram (optionnel)" />
     <div id="preview"></div>
 
+    <button type="button" onclick="getLocation()">📍 Me localiser</button>
     <button type="submit">Envoyer</button>
+    <p id="msg"></p>
   </form>
 
   <script>
-    document.getElementById('insta').addEventListener('input', e => {
+    const scriptURL = "https://script.google.com/macros/s/AKfycbx_kNcuk8AmhwnwWvmU8QYtWE0JrVsGw60vRBvqbaUtPQq0aFZdc_HJSUCEcfWslbLI7A/exec";
+    const form = document.getElementById('etape-form');
+    const msg = document.getElementById("msg");
+
+    // Preview Instagram image
+    document.getElementById('insta').addEventListener('input', (e) => {
       const url = e.target.value;
+      const preview = document.getElementById('preview');
       if (url.includes("instagram.com")) {
-        document.getElementById('preview').innerHTML = `<img src="${url}media/?size=l" width="300" />`;
+        const imgUrl = url.endsWith("/") ? `${url}media/?size=l` : `${url}/media/?size=l`;
+        preview.innerHTML = `<img src="${imgUrl}" />`;
+      } else {
+        preview.innerHTML = "";
       }
     });
 
-    document.getElementById('etapeForm').addEventListener('submit', e => {
+    form.addEventListener("submit", (e) => {
       e.preventDefault();
-      const data = {
-        nom: document.getElementById('nom').value,
-        lat: parseFloat(document.getElementById('lat').value),
-        lng: parseFloat(document.getElementById('lng').value),
-        date: document.getElementById('date').value,
-        insta: document.getElementById('insta').value
-      };
-      console.log("Copier dans JSON :", JSON.stringify(data, null, 2));
-      alert("Étape enregistrée. Copier dans le fichier etapes.json manuellement.");
+      msg.textContent = "Envoi en cours...";
+
+      const data = new FormData(form);
+
+      fetch(scriptURL, { method: 'POST', body: data })
+        .then(() => {
+          msg.textContent = "✔️ Étape envoyée avec succès !";
+          form.reset();
+          document.getElementById('preview').innerHTML = "";
+        })
+        .catch(() => {
+          msg.textContent = "❌ Une erreur est survenue.";
+        });
+    });
+
+    function getLocation() {
+      if (!navigator.geolocation) {
+        alert("La géolocalisation n'est pas supportée.");
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        async position => {
+          const lat = position.coords.latitude.toFixed(6);
+          const lon = position.coords.longitude.toFixed(6);
+          document.getElementById('latitude').value = lat;
+          document.getElementById('longitude').value = lon;
+
+          try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`);
+            const data = await res.json();
+            const ville = data.address.city || data.address.town || data.address.village || "";
+            const pays = data.address.country || "";
+            document.getElementById('lieu').value = `${ville}, ${pays}`;
+          } catch (err) {
+            console.error("Erreur de géocodage inversé :", err);
+          }
+        },
+        error => {
+          alert("Erreur de localisation : " + error.message);
+        }
+      );
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const today = new Date().toISOString().split("T")[0];
+      document.getElementById("date").value = today;
     });
   </script>
 </body>
