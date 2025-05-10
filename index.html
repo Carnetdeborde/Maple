@@ -17,6 +17,7 @@
       flex-direction: column;
       font-family: sans-serif;
       height: 100%;
+      overflow: hidden;
     }
 
     #map {
@@ -25,7 +26,19 @@
       min-height: 0;
     }
 
+    #drapeau {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      font-size: 2em;
+      z-index: 1002;
+    }
+
     .timeline {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
       display: flex;
       overflow-x: auto;
       padding: 1em;
@@ -33,6 +46,7 @@
       border-top: 1px solid #ccc;
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
+      z-index: 999;
     }
 
     .timeline div {
@@ -49,7 +63,7 @@
 
     .floating-buttons {
       position: fixed;
-      bottom: 80px; /* 🔼 bouton remonté */
+      bottom: 110px;
       right: 20px;
       display: flex;
       flex-direction: column;
@@ -84,6 +98,7 @@
   </style>
 </head>
 <body>
+  <div id="drapeau"></div>
   <div id="map"></div>
   <div class="timeline" id="timeline"></div>
 
@@ -106,6 +121,15 @@
       .then(data => {
         const { etapes, suggestions } = data;
         const points = [];
+
+        // 🇺🇳 Afficher le drapeau du dernier pays
+        if (etapes.length > 0) {
+          const last = etapes[etapes.length - 1];
+          const lieu = last.lieu || "";
+          const country = lieu.split(",").pop().trim();
+          const flag = countryNameToFlagEmoji(country);
+          document.getElementById("drapeau").textContent = flag || "";
+        }
 
         etapes.forEach(etape => {
           const lat = parseFloat(etape.latitude);
@@ -174,6 +198,13 @@
         alert("⛔ Accès refusé.");
       }
     }
-  </script>
-</body>
-</html>
+
+    function countryNameToFlagEmoji(name) {
+      const map = {
+        "France": "FR", "Espagne": "ES", "Italie": "IT", "Allemagne": "DE", "Belgique": "BE",
+        "Suisse": "CH", "Maroc": "MA", "États-Unis": "US", "USA": "US", "Canada": "CA",
+        "Japon": "JP", "Portugal": "PT", "Royaume-Uni": "GB", "Angleterre": "GB", "Irlande": "IE",
+        "Brésil": "BR", "Argentine": "AR", "Chili": "CL", "Mexique": "MX", "Islande": "IS",
+        "Norvège": "NO", "Suède": "SE", "Finlande": "FI", "Grèce": "GR", "Turquie": "TR",
+        "Inde": "IN", "Chine": "CN", "Australie": "AU", "Nouvelle-Zélande": "NZ", "Corée du Sud": "KR",
+        "Thaïlande": "TH", "Vietnam": "VN", "Indonésie": "ID", "Égypte"
