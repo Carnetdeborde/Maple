@@ -26,8 +26,9 @@
     #drapeau {
       position: fixed;
       top: 10px;
-      left: 10px;
-      font-size: 2em;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 2.5em;
       z-index: 1002;
     }
     .timeline {
@@ -201,7 +202,7 @@
       const cleaned = name.trim().toLowerCase().replace(/^./, c => c.toUpperCase());
       const code = map[cleaned];
       if (!code) return "";
-      return code.replace(/./g, char => String.fromCodePoint(char.charCodeAt(0) + 127397));
+      return [...code].map(c => String.fromCodePoint(127397 + c.charCodeAt())).join("");
     }
   </script>
 </body>
