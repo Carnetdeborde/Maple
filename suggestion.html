@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Suggérer un lieu</title>
+  <style>
+    label, input, textarea { display: block; margin: 10px 0; width: 100%; }
+  </style>
+</head>
+<body>
+  <h1>Suggérer un lieu à visiter</h1>
+  <form id="suggForm">
+    <label>Prénom</label>
+    <input type="text" id="prenom" required>
+
+    <label>Suggestion</label>
+    <textarea id="texte" required></textarea>
+
+    <label>Latitude</label>
+    <input type="number" step="any" id="lat" required>
+
+    <label>Longitude</label>
+    <input type="number" step="any" id="lng" required>
+
+    <button type="submit">Envoyer</button>
+  </form>
+
+  <script>
+    document.getElementById('suggForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const data = {
+        prenom: document.getElementById('prenom').value,
+        texte: document.getElementById('texte').value,
+        lat: parseFloat(document.getElementById('lat').value),
+        lng: parseFloat(document.getElementById('lng').value)
+      };
+      console.log("Copier dans JSON suggestions.json :", JSON.stringify(data, null, 2));
+      alert("Suggestion envoyée ! À copier dans suggestions.json.");
+    });
+  </script>
+</body>
+</html>
