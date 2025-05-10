@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ajouter une étape</title>
+  <style>
+    label, input, textarea { display: block; margin: 10px 0; width: 100%; }
+  </style>
+</head>
+<body>
+  <h1>Ajouter une étape</h1>
+  <form id="etapeForm">
+    <label>Nom de l'étape (ville, pays)</label>
+    <input type="text" id="nom" required>
+
+    <label>Latitude</label>
+    <input type="number" step="any" id="lat" required>
+
+    <label>Longitude</label>
+    <input type="number" step="any" id="lng" required>
+
+    <label>Date</label>
+    <input type="date" id="date" required>
+
+    <label>URL Instagram (optionnel)</label>
+    <input type="url" id="insta">
+    <div id="preview"></div>
+
+    <button type="submit">Envoyer</button>
+  </form>
+
+  <script>
+    document.getElementById('insta').addEventListener('input', e => {
+      const url = e.target.value;
+      if (url.includes("instagram.com")) {
+        document.getElementById('preview').innerHTML = `<img src="${url}media/?size=l" width="300" />`;
+      }
+    });
+
+    document.getElementById('etapeForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const data = {
+        nom: document.getElementById('nom').value,
+        lat: parseFloat(document.getElementById('lat').value),
+        lng: parseFloat(document.getElementById('lng').value),
+        date: document.getElementById('date').value,
+        insta: document.getElementById('insta').value
+      };
+      console.log("Copier dans JSON :", JSON.stringify(data, null, 2));
+      alert("Étape enregistrée. Copier dans le fichier etapes.json manuellement.");
+    });
+  </script>
+</body>
+</html>
