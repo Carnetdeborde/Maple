@@ -20,7 +20,7 @@
   <h2>Proposer un lieu à visiter</h2>
   <form id="suggestion-form">
     <input name="Prenom" id="prenom" type="text" placeholder="Ton prénom" required />
-    <textarea name="Texte" id="texte" placeholder="Ta suggestion (lieu, idée...)" required></textarea>
+    <textarea name="Texte" id="texte" placeholder="Ta suggestion (lieu, endroit, idée...)" required></textarea>
     <input name="VilleRecherchee" id="ville" type="text" placeholder="Ville ou lieu à suggérer" required />
     <input name="Latitude" id="latitude" type="text" placeholder="Latitude" readonly />
     <input name="Longitude" id="longitude" type="text" placeholder="Longitude" readonly />
@@ -36,7 +36,6 @@
     const latInput = document.getElementById("latitude");
     const lonInput = document.getElementById("longitude");
 
-    // Geocode la ville quand on la quitte
     villeInput.addEventListener("blur", async () => {
       const ville = villeInput.value.trim();
       if (!ville) return;
