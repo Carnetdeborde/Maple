@@ -24,9 +24,12 @@
     .timeline div:hover {
       background: #c0c0ff;
     }
-    a.button {
-      display: inline-block;
+    .buttons {
       margin: 1em;
+    }
+    .button {
+      display: inline-block;
+      margin-right: 10px;
       padding: 0.7em 1.2em;
       background-color: #4CAF50;
       color: white;
@@ -39,7 +42,10 @@
   <h1>Maple – Carte interactive</h1>
   <div id="map"></div>
   <div class="timeline" id="timeline"></div>
-  <a href="formulaire.html" class="button">Ajouter une étape</a>
+  <div class="buttons">
+    <a href="formulaire.html" class="button">Ajouter une étape</a>
+    <a href="suggestion.html" class="button">Suggérer un lieu</a>
+  </div>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
@@ -50,20 +56,14 @@
 
     fetch(sheetURL)
       .then(res => res.json())
-      .then(etapes => {
-        if (!Array.isArray(etapes)) {
-          console.error("Erreur de format de données :", etapes);
-          return;
-        }
+      .then(data => {
+        const { etapes, suggestions } = data;
 
+        // Afficher les étapes officielles
         etapes.forEach(etape => {
           const lat = parseFloat(etape.latitude);
           const lng = parseFloat(etape.longitude);
-
-          if (isNaN(lat) || isNaN(lng)) {
-            console.warn("Coordonnées invalides :", etape);
-            return;
-          }
+          if (isNaN(lat) || isNaN(lng)) return;
 
           L.marker([lat, lng]).addTo(map)
             .bindPopup(`
@@ -78,9 +78,27 @@
           timelineItem.onclick = () => map.setView([lat, lng], 8);
           document.getElementById("timeline").appendChild(timelineItem);
         });
+
+        // Afficher les suggestions (cercles orange)
+        suggestions.forEach(sugg => {
+          const lat = parseFloat(sugg.latitude);
+          const lng = parseFloat(sugg.longitude);
+          if (isNaN(lat) || isNaN(lng)) return;
+
+          L.circle([lat, lng], {
+            radius: 5000,
+            color: 'orange',
+            fillColor: '#ffa500',
+            fillOpacity: 0.5
+          }).addTo(map).bindPopup(`
+            💬 <b>${sugg.prenom}</b> suggère :<br>
+            ${sugg.texte}<br>
+            ${sugg.contactsurplace ? `<br>📞 Contact sur place : ${sugg.contactsurplace}` : ""}
+          `);
+        });
       })
       .catch(err => {
-        console.error("Erreur de chargement des étapes :", err);
+        console.error("Erreur de chargement des données :", err);
       });
   </script>
 </body>
