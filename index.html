@@ -61,9 +61,13 @@
   <h1>Maple – Carte interactive</h1>
   <div id="map"></div>
   <div class="timeline" id="timeline"></div>
+
+  <!-- ✅ Bouton suggestion visible -->
   <div class="floating-buttons">
     <a href="suggestion.html" class="button">💡 Suggérer un lieu</a>
   </div>
+
+  <!-- ✅ Lien admin discret -->
   <div class="admin-link" onclick="window.location.href='formulaire.html'" title="Accès privé admin">⚙️</div>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -104,19 +108,4 @@
 
           L.circle([lat, lng], {
             radius: 5000,
-            color: 'orange',
-            fillColor: '#ffa500',
-            fillOpacity: 0.5
-          }).addTo(map).bindPopup(`
-            💬 <b>${sugg.prenom}</b> suggère :<br>
-            ${sugg.texte}<br>
-            ${sugg.contactsurplace ? `<br>📞 Contact sur place : ${sugg.contactsurplace}` : ""}
-          `);
-        });
-      })
-      .catch(err => {
-        console.error("Erreur de chargement des données :", err);
-      });
-  </script>
-</body>
-</html>
+            color: 'or
